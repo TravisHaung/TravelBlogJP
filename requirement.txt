@@ -1,0 +1,4 @@
+composer create-project laravel/laravel [ProjectName]
+cd [ProjectName]
+composer require laravel/fortify
+php artisan vendor:publish --provider="Laravel\\Fortify\\FortifyServiceProvider"
