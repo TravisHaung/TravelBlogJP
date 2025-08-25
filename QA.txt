@@ -1,0 +1,89 @@
+1. 
+Article::with(['tags','user']) 中，with 表示意思?
+
+2.
+說明 ->latest('updated_at')  與 ->orderby('updated_at') 差異
+$articles = Article::with(['tags','user'])
+            ->latest('updated_at')
+$categories = Category::orderBy('name')->get();
+
+3. Article 中有 published_at 為何都沒用?
+
+4.
+$validated = $request->validate([
+        'title' => 'required|string|max:255',
+        'body' => 'required|string',
+        'category_id' => 'nullable|exists:categories,id',
+        'tags' => 'array',
+        'tags.*' => 'exists:tags,id',
+        ]);
+
+驗證表單中，'nullable|exists:categories,id', 表示什麼?
+
+5.  
+表單更新時，'updated_at' => now() 是需要的嗎?
+何時需要? 何時不需要?
+
+6.
+syncTags 是多餘的吧?
+
+7.
+註冊表單有驗證，但錯誤時，卻沒有呈現錯誤訊息
+
+8.
+說明 $this->authorize('update', $article); 是如何驗證的，邏輯是什麼?
+
+9.
+如果我希望有一個最大權限管理者，可以管理所有人的文章該如何修改?
+
+10.
+有Tag Controller 卻沒有在 Route設定?
+
+11.
+$table->foreignId('article_id')->constrained()->cascadeOnDelete();
+解釋 constrained()->cascadeOnDelete(); 何時觸發又會產生什麼結果?
+
+12. 我選新增了分類沒有被儲存
+
+13. resources\views\layouts\app.blade.php 這用途與設計概念?
+
+14. @csrf 是什麼，用途為何?
+
+15. 如何設定語系，讓錯誤產生中文顯示?
+
+16. belongsTo 跟 belongsToMany 差異為何? 需解釋到資料表結構。
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(Tag::class)->withTimestamps();
+    }
+
+17. 這中文有自動產生成功嗎? 中文會不會出錯? 
+    // 自動產生 slug
+    protected static function booted(): void
+    {
+        static::saving(function (Tag $tag) {
+            if (empty($tag->slug)) {
+                $tag->slug = Str::slug($tag->name);
+            }
+        });
+    }
+
+18.  config中的app.php 內
+'env' => env('APP_ENV', 'production'), 作用是什麼?
+'timezone' => 'UTC', 是不是需要設定?
+
+19. 如果有要檔案上傳，應該要設定檔案的路徑處理
+說明 config/filesystems.php 中如何處理。
+
+20. 註冊上傳圖片就錯誤，原因為何?
+
+21. last_login_at 是否沒用到或忘記用，該怎麼每次登入都可以填入值?
+
+22. ArticleRequest 已經有驗證了，建立與更新時還需要驗證嗎? 兩個驗證差異為何?
+
+23. php .\artisan storage:link 用途是什麼? 
