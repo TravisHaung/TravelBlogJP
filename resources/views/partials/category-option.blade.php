@@ -1,8 +1,15 @@
 <!-- It always seems impossible until it is done. - Nelson Mandela -->
-<option value="">（未分類）</option>
-@foreach($categories as $cat)
-  <option value="{{ $cat->id }}" 
-    {{ (old('category_id', $selected ?? null) == $cat->id) ? 'selected' : '' }}>
-    {{ $cat->name }}
-  </option>
-@endforeach
+<option value="{{ $category->id }}" 
+  {{ $category->id == $selected ? 'selected' : '' }}>
+  {{ $prefix . $category->name }}
+</option>
+
+@if ($category->children && $category->children->count())
+  @foreach ($category->children as $child)
+    @include('partials.category-option', [
+        'category' => $child,
+        'prefix' => $prefix . '—',
+        'selected' => $selected
+    ])
+  @endforeach
+@endif

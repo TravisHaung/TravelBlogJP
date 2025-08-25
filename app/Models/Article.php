@@ -12,7 +12,7 @@ class Article extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'title', 'body', 'published_at',];
+    protected $fillable = ['user_id', 'title', 'body', 'category_id', 'published_at',];
     protected $casts = ['published_at' => 'datetime',];
 
     public function user(): BelongsTo

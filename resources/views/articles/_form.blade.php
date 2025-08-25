@@ -10,7 +10,6 @@
 <div class="mb-3">
   <label for="category_id" class="form-label">分類</label>
   <select name="category_id" id="category_id" class="form-select">
-    <option value="">（未分類）</option>
     @foreach ($categories as $category)
       @include('partials.category-option', [
           'category' => $category,

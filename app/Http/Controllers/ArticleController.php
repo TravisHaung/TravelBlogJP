@@ -27,13 +27,17 @@ class ArticleController extends Controller
             ->latest('updated_at')
             ->paginate(10);
         // 將變數傳給view, compact('articles') 相當於 ['articles' => $articles]
-        return view('articles.index', compact('articles'));
+        return view('articles.index', [
+        'articles' => $articles,
+        'pageTitle' => '所有文章'
+    ]);
     }
 
     public function create(): View
     {
         // 取得Tag的所有資料並依照name排列, $tags: 所有tag的集合
-        $categories = Category::orderBy('name')->get();
+        // $categories = Category::with('children')->whereNull('parent_id')->get();
+        $categories = Category::where('parent_id', 6)->get();
         $tags = Tag::orderBy('name')->get();
         return view('articles.create', compact('categories', 'tags'));
     }
@@ -126,4 +130,32 @@ class ArticleController extends Controller
 
         $article->tags()->sync($tagIds);
     }
-}
+
+    public function byCategory(Category $category)
+    {
+        $articles = $category->articles()
+            ->with(['user','category','tags'])
+            ->latest('published_at')
+            ->paginate(10);
+
+        return view('articles.index', [
+            'articles' => $articles,
+            'pageTitle' => '分類：' . $category->name,
+            'selectedCategory' => $category
+        ]);
+    }
+
+    public function byTag(Tag $tag)
+    {
+        $articles = $tag->articles()
+            ->with(['user','category','tags'])
+            ->latest('published_at')
+            ->paginate(10);
+
+        return view('articles.index', [
+            'articles' => $articles,
+            'pageTitle' => '標籤：' . $tag->name,
+            'selectedTag' => $tag
+        ]);
+    }
+    }

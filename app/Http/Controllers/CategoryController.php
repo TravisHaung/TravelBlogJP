@@ -24,7 +24,6 @@ class CategoryController extends Controller
     public function create()
     {
         $parentCategories = Category::orderBy('name')->get();
-
         return view('categories.create', compact('parentCategories'));
     }
 

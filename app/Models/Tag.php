@@ -19,6 +19,12 @@ class Tag extends Model
         return $this->belongsToMany(Article::class);
     }
 
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
+
     // 自動產生 slug
     protected static function booted(): void
     {
@@ -26,6 +32,14 @@ class Tag extends Model
             if (empty($tag->slug)) {
                 $tag->slug = Str::slug($tag->name);
             }
+        });
+
+        static::creating(function ($tag) {
+            $tag->slug = Str::slug($tag->name);
+        });
+
+        static::updating(function ($tag) {
+            $tag->slug = Str::slug($tag->name);
         });
     }
 }

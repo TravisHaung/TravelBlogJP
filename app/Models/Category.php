@@ -30,6 +30,16 @@ class Category extends Model
         return $this->belongsTo(Category::class, 'parent_id');
     }
 
+    public function articles(): HasMany
+    {
+        return $this->hasMany(Article::class);
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
     /**
      * 可擴：與行程（或文章等）關聯
      */
