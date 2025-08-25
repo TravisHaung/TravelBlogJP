@@ -47,7 +47,7 @@ class ArticleController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'body' => 'required|string',
-            'category_id' => 'nullable|exists:categories,id',
+            'category_id' => 'exists:categories,id',
             'tags' => 'array',
             'tags.*' => 'exists:tags,id',
         ]);
@@ -91,7 +91,7 @@ class ArticleController extends Controller
         $validated = $request->validate([
         'title' => 'required|string|max:255',
         'body' => 'required|string',
-        'category_id' => 'nullable|exists:categories,id',
+        'category_id' => 'exists:categories,id',
         'tags' => 'array',
         'tags.*' => 'exists:tags,id',
         ]);

@@ -4,9 +4,20 @@
     <!-- Order your soul. Reduce your wants. - Augustine -->
     <div class="col-md-6">
         <h1 class="h3 mb-3">註冊</h1>
-        <form method="POST" action="{{ route('register') }}">
+        <form method="POST" action="{{ route('register') }}"  enctype="multipart/form-data">
             <!--app/Actions/Fortify/CreateNewUser預設必須要有"name","email","password"-->
             @csrf
+
+            @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
+
             <div class="mb-3">
                 <label class="form-label">使用者名稱</label>
                 <input type="text" name="name" class="form-control" required>
@@ -25,7 +36,7 @@
             </div>
             <div class="mb-3">
                 <label class="form-label">頭像</label>
-                <input type="file" name="avatar" class="form-control">
+                <input type="file" name="avatar" class="form-control" enctype="multipart/form-data">
             </div>
             <button class="btn btn-primary">註冊</button>
         </form>

@@ -29,14 +29,17 @@ class CreateNewUser implements CreatesNewUsers
                 Rule::unique(User::class),
             ],
             'password' => $this->passwordRules(),
-            'avatar' => ['nullable', 'image', 'max:2048'],
         ])->validate();
 
-        $avatarPath = 'images/default-avatar.png';
+        $avatarPath = 'app/public/avatars/default-avatar.png';
+
         if (request()->hasFile('avatar')) {
+            // 對 request() 做驗證
+            request()->validate(['avatar' => ['image','max:2048'],]);
             $path = request()->file('avatar')->store('avatars', 'public');
             $avatarPath = 'storage/'.$path;
         }
+        //dd($input, request()->file('avatar'));
 
         return User::create([
             'name' => $input['name'],
