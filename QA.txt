@@ -126,6 +126,10 @@ $table->foreignId('article_id')->constrained()->cascadeOnDelete();
 
 19. 如果有要檔案上傳，應該要設定檔案的路徑處理
 說明 config/filesystems.php 中如何處理。
+    Ans:
+    $path = $request->file('avatar')->store('avatars', 'public');
+    會在'public'磁碟的根目錄建立'avatars'資料夾，並將檔案存儲其中
+    存取時透過設定的象徵連結找到 ('links' => [...]) (php artisan storage:link)
 
 20. 註冊上傳圖片就錯誤，原因為何?
     Ans:
