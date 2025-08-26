@@ -1,20 +1,17 @@
 1. 
-Article::with(['tags','user']) 中，with 表示意思?
-    Ans: 
+Article::with(['tags','user']) 中，with 表示意思?    Ans: 
     查詢Articles資料表中每對(tag, user)的值
 
-2.
-說明 ->latest('updated_at')  與 ->orderby('updated_at') 差異
-$articles = Article::with(['tags','user'])
-            ->latest('updated_at')
-$categories = Category::orderBy('name')->get();
 
-    Ans: ->latest('updated_at') 相當於 ->orderBy('updated_at', 'desc')
+    1-1.說明Model 需要做什麼才能使用With?
+
 
 3. Article 中有 published_at 為何都沒用?
     Ans:
     這個blog其實未來打算自用
     單純覺得timestamp之後哪處用的著
+
+    3-1. 可以用於未來上架日期，例如這篇文章希望在三天後才呈現，就設定三天後日期，當資料表撈資料時，要排除掉published_at大於現在的時間
 
 4.
 $validated = $request->validate([
@@ -30,6 +27,8 @@ $validated = $request->validate([
     回覆可以是null，只是倘若有值，那個值必須存在於Categories['id']中
     該設計是錯的，分類不該存在空值
 
+    4-1. 分類可以為空值，前台顯示"未分類"，這設計沒問題，但是要判斷空時改變顯示。
+
 5.  
 表單更新時，'updated_at' => now() 是需要的嗎?
 何時需要? 何時不需要?
@@ -37,56 +36,15 @@ $validated = $request->validate([
     Article中的updated_at日後或許會開發排序相關功能
     Category中的完全不需要
 
-6.
-syncTags 是多餘的吧?
-    Ans: 
-    之後想結合search bar開發讓使用者自訂tag的功能
-
-7.
-註冊表單有驗證，但錯誤時，卻沒有呈現錯誤訊息
-    Ans: 沒有在Blade中呼叫錯誤顯示，已修正
-
-8.
-說明 $this->authorize('update', $article); 是如何驗證的，邏輯是什麼?
-    Ans:
-    會引用AuthServiceProvider註冊的ArticlePolicy ($article->user_id === $user->id)
-    來驗證該使用者是否有update/delete該文章的權限
-    前端已有相關隱藏措施 以防萬一用
-
-9.
-如果我希望有一個最大權限管理者，可以管理所有人的文章該如何修改?
-    Ans: 在User中新加入一個boolean判斷使用者身分，給予admin管理所有人文章的權限
-
-10.
-有Tag Controller 卻沒有在 Route設定?
-    Ans: 
-    一樣是保留著以待日後更複雜的tag功能
-
-11.
-$table->foreignId('article_id')->constrained()->cascadeOnDelete();
-解釋 constrained()->cascadeOnDelete(); 何時觸發又會產生什麼結果?
-    Ans: 
-    constrained()表明對應了 articles資料表的id，是一個foreign key
-    cascadeOnDelete()則會讓當articles那邊有刪除文章時，連帶刪除這邊pivot table與該文章相關的所有資料
-
-12. 我選新增了分類沒有被儲存
-    Ans:
-    因為Articles資料表先前未加上category_id的屬性，已修正
-
-13. resources\views\layouts\app.blade.php 這用途與設計概念?
-    Ans:
-    引入必要檔案，設定背景、nav bar等等，決定網頁整體的設計風格
-
-14. @csrf 是什麼，用途為何?
-    Ans:
-    CSRF: cross-site request forgery跨站請求偽造
-    利用已認證用戶的身份，在用戶不知情的情況下，進行未授權的操作。
-    @csrf會生成一個token存在user session中，確保操作來自本人
+    5-1. 如果資料是透過Model更新時，不需要主動修改updated_at，Model會自己更新，除非你用DB::去做資料的更新或新增，created_at也是一樣道理
 
 15. 如何設定語系，讓錯誤產生中文顯示?
     Ans:
     bash                composer require laravel-lang/lang
     config/app.php      'locale' => 'zh_TW',
+
+    15-1 這不是我要，我要可以自己設定所有錯誤的訊息，且可以做多國語系，在blade中使用，然後設定這網站目前是中文為主
+    參考 https://laravel.com/docs/12.x/localization
 
 16. belongsTo 跟 belongsToMany 差異為何? 需解釋到資料表結構。
     public function category()
@@ -102,19 +60,8 @@ $table->foreignId('article_id')->constrained()->cascadeOnDelete();
     belongsTo用於一對多關係，代表「我屬於某個東西」，ex:[文章] belongsTo [分類]，透過foreignKey查找
     belongsToMany用於多對多關係，代表「我共同屬於某些東西」，需透過pivot table
 
-17. 這中文有自動產生成功嗎? 中文會不會出錯? 
-    // 自動產生 slug
-    protected static function booted(): void
-    {
-        static::saving(function (Tag $tag) {
-            if (empty($tag->slug)) {
-                $tag->slug = Str::slug($tag->name);
-            }
-        });
-    }
+    16-1. 使用這兩個時，資料表的命名是否有限制?
 
-    Ans:
-    為AI產生的code，不符合我欲設計的功能，故沒有用過
 
 18.  config中的app.php 內
 'env' => env('APP_ENV', 'production'), 作用是什麼?
@@ -124,6 +71,9 @@ $table->foreignId('article_id')->constrained()->cascadeOnDelete();
     1. 從.env中取得APP_NAME，沒有就預設'Laravel'
     2. 確實
 
+    18-1. 我是問APP_ENV，不是APP_NAME，說明 APP_ENV 對log的影響
+
+
 19. 如果有要檔案上傳，應該要設定檔案的路徑處理
 說明 config/filesystems.php 中如何處理。
     Ans:
@@ -131,10 +81,8 @@ $table->foreignId('article_id')->constrained()->cascadeOnDelete();
     會在'public'磁碟的根目錄建立'avatars'資料夾，並將檔案存儲其中
     存取時透過設定的象徵連結找到 ('links' => [...]) (php artisan storage:link)
 
-20. 註冊上傳圖片就錯誤，原因為何?
-    Ans:
-    1. 未加上enctype="multipart/form-data"
-    2. Validator在驗證$input查到的avatar是一串字串而非檔案
+    19-1.圖檔名稱怎麼辦? 在public根目錄 又怎麼會跟 storage 有關? 所以是建立在 storage 中，還是public? 兩者差異?
+
 
 21. last_login_at 是否沒用到或忘記用，該怎麼每次登入都可以填入值?
     Ans:
@@ -147,7 +95,20 @@ $table->foreignId('article_id')->constrained()->cascadeOnDelete();
     ArticleRequest檢查有登入session，即[是否為本人操作該帳戶]
     建立/更新時的驗證為[該帳戶是否有對該文章執行操作的權限]
 
-23. php .\artisan storage:link 用途是什麼? 
-    Ans:
-    與laravel專案中的storage/app/public資料夾建立連結
-    未來如要儲存/讀取檔案 便將依循上述路徑
+    22-1. 我問的是表單驗證，不是權限
+     return [
+            'title' => ['required','string','max:150'],
+            'body' => ['required','string','min:10'],
+            // 'published_at' => ['nullable','date'],
+            'tags' => ['nullable','array'],
+            'tags.*' => ['integer','exists:tags,id'],
+        ];
+    與
+    $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'body' => 'required|string',
+            'category_id' => 'exists:categories,id',
+            'tags' => 'array',
+            'tags.*' => 'exists:tags,id',
+            ]);
+
